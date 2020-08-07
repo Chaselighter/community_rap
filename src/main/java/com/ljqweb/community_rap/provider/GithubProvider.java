@@ -18,7 +18,7 @@ public class GithubProvider {
 
         RequestBody body = RequestBody.create(JSON.toJSONString(accessTokenDTO),mediaType);
         Request request = new Request.Builder()
-                    .url("https://github.com/login/oauth/access_token")
+                    .url("https://github.com/login/oauth/access_token?client_id=69b77bd8543e279d2c5c&client_secret=384878fa2edaf5b882cfc7729b355d4b246629ab&code="+accessTokenDTO.getClient_code()+"&redirect_uri=http://localhost:8887/callback&state=1")
                     .post(body)
                     .build();
         try (Response response = client.newCall(request).execute()) {
