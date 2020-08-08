@@ -7,7 +7,7 @@
 <div th:fragment="nav">
     &copy; 2011 The Good Thymes Virtual Grocery
 
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-default">question
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -38,7 +38,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="/profile/question">我的问题</a></li>
                             <li><a href="#">个人资料</a></li>
-                            <li><a href="#">退出登录</a></li>
+                            <li><a href="/logout">退出登录</a></li>
                         </ul>
                     </li>
                     <li th:if="${session.user==null}"><a href="https://github.com/login/oauth/authorize?client_id=69b77bd8543e279d2c5c&redirect_uri=http://localhost:8080/callback&scope=user&state=1">登录</a></li>

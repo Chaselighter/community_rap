@@ -39,8 +39,16 @@ public class QuestionService {
         }
 
         pageinationDTO.setPageination(totalPage,page);
-        Integer offset = size*(page-1);
-        List<Question> questions = questionMapper.list(offset,size);
+        List<Question> questions = new ArrayList<>();
+        Integer offset;
+        if(size*(page-1)<0){
+            questions = questionMapper.list(0,0);
+        }else{
+            offset = size*(page-1);
+            questions = questionMapper.list(offset,size);
+        }
+
+
 
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question :questions){
@@ -74,8 +82,15 @@ public class QuestionService {
         }
         pageinationDTO.setPageination(totalPage,page);
 
-        Integer offset = size*(page-1);
-        List<Question> questions = questionMapper.listByUserId(userId,offset,size);
+        List<Question> questions = new ArrayList<>();
+        Integer offset;
+        if(size*(page-1)<0){
+            questions = questionMapper.listByUserId(userId,0,0);
+        }else{
+            offset = size*(page-1);
+            questions = questionMapper.listByUserId(userId,offset,size);
+        }
+        //List<Question> questions = questionMapper.listByUserId(userId,offset,size);
 
         List<QuestionDTO> questionDTOList = new ArrayList<>();
         for (Question question :questions){
@@ -88,5 +103,25 @@ public class QuestionService {
         pageinationDTO.setQuestions(questionDTOList);
 
         return pageinationDTO;
+    }
+
+    public QuestionDTO getById(Integer id) {
+        Question question = questionMapper.GetById(id);
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(question,questionDTO);
+        User user = userMapper.findById(question.getCreator());
+        questionDTO.setUser(user);
+        return questionDTO;
+    }
+
+    public void createOrUpdate(Question question) {
+        if(question.getId()==null){
+            question.setGmtCreate(System.currentTimeMillis());
+            question.setGmtModified(question.getGmtCreate());
+            questionMapper.create(question);
+        }else{
+            question.setGmtModified(question.getGmtCreate());
+            questionMapper.update(question);
+        }
     }
 }
