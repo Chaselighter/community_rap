@@ -3,10 +3,14 @@ package com.ljqweb.community_rap.service;
 
 import com.ljqweb.community_rap.dto.PageinationDTO;
 import com.ljqweb.community_rap.dto.QuestionDTO;
+import com.ljqweb.community_rap.exception.CustomizeErrorCode;
+import com.ljqweb.community_rap.exception.CustomizeException;
 import com.ljqweb.community_rap.mapper.QuestionMapper;
 import com.ljqweb.community_rap.mapper.UserMapper;
 import com.ljqweb.community_rap.model.Question;
+import com.ljqweb.community_rap.model.QuestionExample;
 import com.ljqweb.community_rap.model.User;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +28,7 @@ public class QuestionService {
         //size(page-1)
         PageinationDTO pageinationDTO = new PageinationDTO();
         Integer totalPage;
-        Integer totalCount = questionMapper.count();
+        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
 
         if(totalCount%size==0){
             totalPage = totalCount/size;
@@ -42,10 +46,10 @@ public class QuestionService {
         List<Question> questions = new ArrayList<>();
         Integer offset;
         if(size*(page-1)<0){
-            questions = questionMapper.list(0,0);
+            questions = questionMapper.selectByExampleWithRowbounds(new QuestionExample(), new RowBounds(0, 0));
         }else{
             offset = size*(page-1);
-            questions = questionMapper.list(offset,size);
+            questions = questionMapper.selectByExampleWithRowbounds(new QuestionExample(), new RowBounds(offset, size));
         }
 
 
@@ -67,7 +71,9 @@ public class QuestionService {
         //size(page-1)
         PageinationDTO pageinationDTO = new PageinationDTO();
         Integer totalPage;
-        Integer totalCount = questionMapper.countByUserId(userId);
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.createCriteria().andCreatorEqualTo(userId);
+        Integer totalCount = (int)questionMapper.countByExample(questionExample);
 
         if(totalCount%size==0){
             totalPage = totalCount/size;
@@ -84,11 +90,14 @@ public class QuestionService {
 
         List<Question> questions = new ArrayList<>();
         Integer offset;
+        QuestionExample example = new QuestionExample();
+        example.createCriteria().andCreatorEqualTo(userId);
         if(size*(page-1)<0){
-            questions = questionMapper.listByUserId(userId,0,0);
+            questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(0, 0));
         }else{
             offset = size*(page-1);
-            questions = questionMapper.listByUserId(userId,offset,size);
+
+            questions = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
         }
         //List<Question> questions = questionMapper.listByUserId(userId,offset,size);
 
@@ -106,7 +115,10 @@ public class QuestionService {
     }
 
     public QuestionDTO getById(Integer id) {
-        Question question = questionMapper.GetById(id);
+        Question question = questionMapper.selectByPrimaryKey(id);
+        if(question==null){
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -118,10 +130,21 @@ public class QuestionService {
         if(question.getId()==null){
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
-            questionMapper.create(question);
+            questionMapper.insert(question);
         }else{
             question.setGmtModified(question.getGmtCreate());
-            questionMapper.update(question);
+            Question updateQuestion = new Question();
+            updateQuestion.setGmtModified(System.currentTimeMillis());
+            updateQuestion.setTitle(question.getTitle());
+            updateQuestion.setDescription(question.getDescription());
+            updateQuestion.setTag(question.getTag());
+            QuestionExample example = new QuestionExample();
+            example.createCriteria().andIdEqualTo(question.getId());
+            int updated =questionMapper.updateByExampleSelective(updateQuestion, example);
+            if(updated!=1){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
+
         }
     }
 }
