@@ -2,6 +2,7 @@ package com.ljqweb.community_rap.controller;
 
 
 import com.ljqweb.community_rap.dto.QuestionDTO;
+import com.ljqweb.community_rap.mapper.QuestionExtMapper;
 import com.ljqweb.community_rap.mapper.QuestionMapper;
 import com.ljqweb.community_rap.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,14 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
+
+
     @GetMapping("question/{id}")
     public String question(@PathVariable(name="id") Integer id,
                            Model model){
         QuestionDTO questionDTO = questionService.getById(id);
+        //累加阅读数
+        questionService.incView(id);
         model.addAttribute("question",questionDTO);
         return "question";
     }

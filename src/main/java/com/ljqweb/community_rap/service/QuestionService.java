@@ -5,6 +5,7 @@ import com.ljqweb.community_rap.dto.PageinationDTO;
 import com.ljqweb.community_rap.dto.QuestionDTO;
 import com.ljqweb.community_rap.exception.CustomizeErrorCode;
 import com.ljqweb.community_rap.exception.CustomizeException;
+import com.ljqweb.community_rap.mapper.QuestionExtMapper;
 import com.ljqweb.community_rap.mapper.QuestionMapper;
 import com.ljqweb.community_rap.mapper.UserMapper;
 import com.ljqweb.community_rap.model.Question;
@@ -24,6 +25,9 @@ public class QuestionService {
     private UserMapper userMapper;
     @Autowired
     private QuestionMapper questionMapper;
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
+
     public PageinationDTO List(Integer page, Integer size) {
         //size(page-1)
         PageinationDTO pageinationDTO = new PageinationDTO();
@@ -146,5 +150,14 @@ public class QuestionService {
             }
 
         }
+    }
+
+    public void incView(Integer id) {
+
+        Question question = new Question();
+        question.setId(id);
+        question.setViewCount(1);
+        questionExtMapper.incView(question);
+
     }
 }
