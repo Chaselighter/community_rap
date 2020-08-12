@@ -27,7 +27,7 @@ public class CustomizeExceptionHandler {
         String contentType = request.getContentType();
         if("application/json".equals(contentType)){
             //返回json
-            ResultDTO resultDTO = null;
+            ResultDTO resultDTO;
             if(e instanceof CustomizeException){
                 resultDTO = ResultDTO.errorOf((CustomizeException) e);
             }else{
@@ -38,8 +38,9 @@ public class CustomizeExceptionHandler {
                 response.setStatus(200);
                 response.setCharacterEncoding("UTF-8");
                 PrintWriter writer = response.getWriter();
-                writer.close();
                 writer.write(JSON.toJSONString(resultDTO));
+                writer.close();
+
 
             }catch (IOException ioException){
 
