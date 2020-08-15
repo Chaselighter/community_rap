@@ -12,6 +12,30 @@ body{
 .question-title{
     margin-top: 15px;
 }
+.question-tag{
+    margin-right: 5px;
+}
+.question-ljq{
+    width: 100%;
+}
+.publish-tag-tab {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.publish-tag-tab . label-info {
+    white-space: normal;
+    margin: 5px 5px;
+    display: inline-block;
+}
+.question-related{
+    line-height: 20px;
+    font-size: 12px;
+    margin-left: 0;
+    list-style: none;
+    padding-left: 0;
+}
 .media-object{
     width: 38px;
     height: 38px;
@@ -28,7 +52,7 @@ body{
     margin-top: 15px;
 }
 .community-menu{
-    display: block;
+    /*display: block;*/
     color: #999;
     font-size: 13px;
     margin-bottom: 15px;
@@ -47,6 +71,10 @@ body{
     margin-top: 5px;
 }
 .menu .icon{
+    font-size: 15px;
+    cursor: pointer;
+}
+.menu .comment-icon{
     margin-left: 6px;
     font-size: 15px;
     cursor: pointer;
@@ -55,6 +83,9 @@ body{
     color: #499ef3;
 }
 .menu:hover .icon{
+    color: #499ef3;
+}
+.menu:hover .comment-icon{
     color: #499ef3;
 }
 .comments{

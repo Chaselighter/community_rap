@@ -4,10 +4,7 @@ import com.ljqweb.community_rap.dto.CommentDTO;
 import com.ljqweb.community_rap.enums.CommentTypeEnum;
 import com.ljqweb.community_rap.exception.CustomizeErrorCode;
 import com.ljqweb.community_rap.exception.CustomizeException;
-import com.ljqweb.community_rap.mapper.CommentMapper;
-import com.ljqweb.community_rap.mapper.QuestionExtMapper;
-import com.ljqweb.community_rap.mapper.QuestionMapper;
-import com.ljqweb.community_rap.mapper.UserMapper;
+import com.ljqweb.community_rap.mapper.*;
 import com.ljqweb.community_rap.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +27,8 @@ public class CommentService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
     @Autowired
+    private CommentExtMapper commentExtMapper;
+    @Autowired
     private UserMapper userMapper;
     @Transactional
     public void insert(Comment comment) {
@@ -46,6 +45,11 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             commentMapper.insert(comment);
+            //增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(comment.getParentId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.incCommentCount(parentComment);
         }else{
                 //回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
