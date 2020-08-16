@@ -5,9 +5,9 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 @Data
-public class PageinationDTO {
+public class PageinationDTO <T> {
     private Integer totalPage;
-    private List<QuestionDTO> questions;
+    private List<T> data;
     private boolean showPrevious;
     private boolean showNext;
     private boolean showFirstPage;
