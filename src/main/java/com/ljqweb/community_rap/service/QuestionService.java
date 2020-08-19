@@ -3,6 +3,7 @@ package com.ljqweb.community_rap.service;
 
 import com.ljqweb.community_rap.dto.PageinationDTO;
 import com.ljqweb.community_rap.dto.QuestionDTO;
+import com.ljqweb.community_rap.dto.QuestionQueryDTO;
 import com.ljqweb.community_rap.exception.CustomizeErrorCode;
 import com.ljqweb.community_rap.exception.CustomizeException;
 import com.ljqweb.community_rap.mapper.QuestionExtMapper;
@@ -31,11 +32,18 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PageinationDTO List(Integer page, Integer size) {
+    public PageinationDTO List(String search,Integer page, Integer size) {
         //size(page-1)
+        if(StringUtils.isNotBlank(search)){
+            String[] tags = StringUtils.split(search," ");
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+
         PageinationDTO pageinationDTO = new PageinationDTO();
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
         Integer totalPage;
-        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
+        questionQueryDTO.setSearch(search);
+        Integer totalCount = (int)questionExtMapper.countBySearch(questionQueryDTO);
 
         if(totalCount%size==0){
             totalPage = totalCount/size;
@@ -51,17 +59,11 @@ public class QuestionService {
 
         pageinationDTO.setPageination(totalPage,page);
         List<Question> questions = new ArrayList<>();
-        Integer offset;
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.setOrderByClause("gmt_create desc");
-        if(size*(page-1)<0){
+        Integer offset = page < 1 ? 0 : size * (page - 1);
 
-            questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(0, 0));
-        }else{
-            offset = size*(page-1);
-            questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
-        }
-
+        questionQueryDTO.setPage(offset);
+        questionQueryDTO.setSize(size);
+        questions = questionExtMapper.selectBySearch(questionQueryDTO);
 
 
         List<QuestionDTO> questionDTOList = new ArrayList<>();

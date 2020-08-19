@@ -6,6 +6,7 @@ import com.ljqweb.community_rap.mapper.UserMapper;
 import com.ljqweb.community_rap.model.User;
 import com.ljqweb.community_rap.provider.GithubProvider;
 import com.ljqweb.community_rap.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Controller
+@Slf4j
 public class AuthorityController {
     @Autowired
     private GithubProvider githubProvider;
@@ -67,6 +69,7 @@ public class AuthorityController {
             //request.getSession().setAttribute("user",githubUser);
             return "redirect:/";
         }else{
+            log.error("callback get github error,{}",githubUser);
             //登录失败
             return "redirect:/";
         }

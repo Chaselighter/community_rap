@@ -28,12 +28,13 @@ public class indexController {
     @GetMapping("/")
     public String index(Model model,
                         @RequestParam(name="page",defaultValue = "1") Integer page,
-                        @RequestParam(name="size",defaultValue = "5") Integer size){
+                        @RequestParam(name="size",defaultValue = "5") Integer size,
+                        @RequestParam(name="search",required =false) String search){
 
 
-        PageinationDTO pageination=questionService.List(page,size);
+        PageinationDTO pageination=questionService.List(search,page,size);
         model.addAttribute("pageination",pageination);
-
+        model.addAttribute("search",search);
         return "index";
     }
 }

@@ -10,6 +10,7 @@ import com.ljqweb.community_rap.mapper.CommentMapper;
 import com.ljqweb.community_rap.model.Comment;
 import com.ljqweb.community_rap.model.User;
 import com.ljqweb.community_rap.service.CommentService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
-
+@Slf4j
 public class CommentController {
     @Autowired
     private CommentMapper commentMapper;
